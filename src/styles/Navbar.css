@@ -1,0 +1,27 @@
+nav{
+    background-color: #1e3a8a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    color: white;
+
+}
+ul{
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+li{
+    cursor: pointer;
+    transition: color .3s;
+}
+
+ul li:hover a{
+    color: yellow;
+}
+ul li a{
+    color: white;
+    text-decoration: none;
+}
