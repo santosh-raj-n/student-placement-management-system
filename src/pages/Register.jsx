@@ -7,24 +7,30 @@ const Register = () => {
         dept:"",
         phone:""
     })
+    const [errors, setErrors]=useState({
+
+    })
 
     const handleSubmit=(event)=>{
         event.preventDefault();
-        if(formData.name.trim()==""){
-            console.log("Name is required");
-            return;
+        const newErrors={};
+        if(formData.name.trim()===""){
+            newErrors.name="Name is required";
         }
-        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())){
-            console.log("Email is required");
-            return;
+        if(formData.email.trim()===""){
+            newErrors.email= "Email should not be empty";
+        }else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())){
+            newErrors.email="Enter a valid Email"
         }
-        if(formData.dept.trim()==""){
-            console.log("Department is required");
-            return;
+        if(formData.dept.trim()===""){
+            newErrors.dept="Department cannot be empty"
         }
         if(!/^\d{10}$/.test(formData.phone.trim())){
-            console.log("Enter a valid phone no.");
-            return;
+            newErrors.phone="Enter a valid phone no."
+        }
+        setErrors(newErrors);
+        if(Object.values(newErrors).length>0){
+            return
         }
         console.log("Student Details");
         console.log("Name:", formData.name);
@@ -54,6 +60,7 @@ const Register = () => {
                         onChange={handleChange}
                     />
             </div>
+            {errors.name && <p>{errors.name}</p>}
             <br />
             <div>
                 <label>Email:</label>
@@ -64,6 +71,7 @@ const Register = () => {
                     onChange={handleChange}
                 />
             </div>
+            {errors.email && <p>{errors.email}</p>}
             <br />
             <div>
                 <label>Department:</label>
@@ -74,6 +82,7 @@ const Register = () => {
                     onChange={handleChange}
                 />
             </div>
+            {errors.dept && <p>{errors.dept}</p>}
             <br />
             <div>
                 <label>Phone Number:</label>
@@ -85,6 +94,7 @@ const Register = () => {
                     onChange={handleChange}
                 />
             </div>
+            {errors.phone && <p>{errors.phone}</p>}
             <br />
             <button type='submit'>Register</button>
         </form>
