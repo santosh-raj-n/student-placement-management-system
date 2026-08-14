@@ -66,9 +66,14 @@ const Companies = () => {
         setCompanies(updatedCompanies)
         setEditingCompany(null)
     }
+    const totalOpenings = companies.reduce((total, company) => {
+    return total + Number(company.openings);
+    }, 0);
 
   return (
     <>
+        <h2>Total Companies: {companies.length}</h2>
+        <h2>Total Openings: {totalOpenings}</h2>
         <h1>Companies That Are Hiring</h1>
         {companies.map((company)=>(
             <div key={company.id}>
