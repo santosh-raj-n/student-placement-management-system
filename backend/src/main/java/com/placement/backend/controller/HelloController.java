@@ -4,10 +4,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.placement.backend.model.Stat;
+import com.placement.backend.service.StatService;
 
 @RestController
 @RequestMapping("/api")
 public class HelloController {
+    private final StatService statService;
+    public HelloController(StatService statService) {
+    this.statService = statService;
+    }
 
     @GetMapping("/hello")
     public String hello() {
@@ -15,6 +20,6 @@ public class HelloController {
     }
     @GetMapping("/stat")
     public Stat getStat() {
-    return new Stat("500+", "Students Placed");
+    return statService.getStat();
     }
 }

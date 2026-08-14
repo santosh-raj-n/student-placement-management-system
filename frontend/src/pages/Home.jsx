@@ -3,6 +3,8 @@ import WelcomeBanner from '../components/WelcomeBanner';
 import StatCard from '../components/StatCard';
 
 const Home=()=>{
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    
     const [stats, setStats] = useState([
         {
             number: "250+",
@@ -19,7 +21,7 @@ const Home=()=>{
     ]);
 
     useEffect(() => {
-        setStats([
+    setStats([
             {
             number: "500+",
             title: "Students Placed",
@@ -32,11 +34,37 @@ const Home=()=>{
             number: "92%",
             title: "Placement Rate",
             },
-        ]);
+    ]);
+
+    const savedLogin = localStorage.getItem("isLoggedIn");
+
+            if (savedLogin) {
+                setIsLoggedIn(JSON.parse(savedLogin));
+            }
     }, []);
     return(
     <>
-        <WelcomeBanner name="Santosh"/>
+        {isLoggedIn ? (
+            <WelcomeBanner name="Santosh" />
+                ) : (
+                <h2>Please login to continue</h2>
+            )}
+        
+        <button onClick={() => {
+            setIsLoggedIn(true);
+            localStorage.setItem("isLoggedIn", "true");
+            }}>
+                 Login
+        </button>
+            <br />
+            <br />
+        <button onClick={() => {
+            setIsLoggedIn(false);
+            localStorage.removeItem("isLoggedIn");
+            }}>
+                Logout
+        </button>
+
         <div className="stats-section">
             <h2>Placement Statistics</h2>
             {
