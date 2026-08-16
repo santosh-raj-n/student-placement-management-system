@@ -1,8 +1,10 @@
 import React from 'react'
+import useAuth from '../hooks/useAuth';
 import "../styles/Navbar.css";
 import { Link } from 'react-router-dom';
 
-const Navbar=(props)=>{
+const Navbar=()=>{
+    const { isLoggedIn, logout } = useAuth();
     return(
         <nav>
             <h2>Placement Portal</h2>
@@ -13,13 +15,9 @@ const Navbar=(props)=>{
                 <li>
                     <Link to="/company">Companies</Link>
                 </li>
-                {props.isLoggedIn ? (
+                {isLoggedIn ? (
                     <li>
-                        <button onClick={() => {
-                            props.setIsLoggedIn(false);
-                            localStorage.removeItem("isLoggedIn");
-                            }}>Logout
-                        </button>
+                        <button onClick={logout}> Logout </button>
                     </li>
                         ) : (
                     <>

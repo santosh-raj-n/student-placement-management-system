@@ -1,15 +1,13 @@
-import React from 'react'
+import React from 'react';
+import useAuth from '../hooks/useAuth';
 
-const Login = (props) => {
+const Login = () => {
+    const { login } = useAuth();
     return (
         <>
             <h1>Login Page</h1>
 
-            <button onClick={() => {
-              props.setIsLoggedIn(true);
-              localStorage.setItem("isLoggedIn", "true");
-              }}>  Login
-            </button>
+            <button onClick={login}>  Login </button>
         </>
     )
 }

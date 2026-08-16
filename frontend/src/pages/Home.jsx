@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react'
+import { useContext } from 'react';
+import AuthContext from '../context/AuthContext';
 import WelcomeBanner from '../components/WelcomeBanner';
 import StatCard from '../components/StatCard';
+import useAuth from '../hooks/useAuth';
 
-const Home = (props) => {
+const Home = () => {
 
+    const { isLoggedIn } = useAuth();
     const [stats, setStats] = useState([
         {
             number: "250+",
@@ -38,7 +42,7 @@ const Home = (props) => {
 
     return (
         <>
-            {props.isLoggedIn ? (
+            {isLoggedIn ? (
                 <WelcomeBanner name="Santosh" />
             ) : (
                 <h2>Please login to continue</h2>
