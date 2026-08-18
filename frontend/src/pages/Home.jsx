@@ -1,43 +1,28 @@
-import React, { useState, useEffect } from 'react'
-import { useContext } from 'react';
-import AuthContext from '../context/AuthContext';
+import React, { useEffect, useState } from 'react';
 import WelcomeBanner from '../components/WelcomeBanner';
 import StatCard from '../components/StatCard';
 import useAuth from '../hooks/useAuth';
+import { getStats } from '../api/statsApi';
 
 const Home = () => {
 
     const { isLoggedIn } = useAuth();
-    const [stats, setStats] = useState([
-        {
-            number: "250+",
-            title: "Students Placed",
-        },
-        {
-            number: "50+",
-            title: "Companies",
-        },
-        {
-            number: "95%",
-            title: "Placement Rate",
-        },
-    ]);
+    const [stats, setStats] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        setStats([
-            {
-                number: "500+",
-                title: "Students Placed",
-            },
-            {
-                number: "80+",
-                title: "Companies",
-            },
-            {
-                number: "92%",
-                title: "Placement Rate",
-            },
-        ]);
+    const loadStats = async () => {
+        try {
+            const data = await getStats();
+                setStats(data);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadStats();
     }, []);
 
     return (
@@ -51,18 +36,22 @@ const Home = () => {
             <div className="stats-section">
                 <h2>Placement Statistics</h2>
 
-                {stats.map((stat, index) => {
+                {loading && <p>Loading statistics...</p>}
+
+                {error && <p>{error}</p>}
+
+                {!loading && !error && stats.map((stat, index) => {
                     return (
                         <StatCard
                             key={index}
                             number={stat.number}
                             title={stat.title}
                         />
-                    )
+                    );
                 })}
             </div>
         </>
     );
-}
+};
 
 export default Home;

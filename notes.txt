@@ -1,0 +1,6 @@
+backend start :
+
+mvnw spring-boot:run
+
+.\mvnw.cmd clean compile
+for compiling after adding dependencies
