@@ -2,31 +2,39 @@ import { useState, useEffect } from "react";
 import AuthContext from "./AuthContext";
 
 const AuthProvider = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const login = (userData) => {
+    setIsLoggedIn(true);
+    setUser(userData);
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
 
-    const login = () => {
-        setIsLoggedIn(true);
-        localStorage.setItem("isLoggedIn", "true");
-    };
-    const logout = () => {
+  const logout = () => {
     setIsLoggedIn(false);
+    setUser(null);
+
     localStorage.removeItem("isLoggedIn");
-    };
+    localStorage.removeItem("user");
+  };
 
-    useEffect(() => {
+  useEffect(() => {
     const savedLogin = localStorage.getItem("isLoggedIn");
+    const savedUser = localStorage.getItem("user");
 
-        if (savedLogin) {
-            setIsLoggedIn(JSON.parse(savedLogin));
-        }
-    }, []);
+    if (savedLogin) {
+      setIsLoggedIn(JSON.parse(savedLogin));
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
-                    {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;
