@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.placement.backend.dto.LoginResponse;
 import com.placement.backend.model.User;
 import com.placement.backend.service.UserService;
 
@@ -26,16 +27,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User user) {
+    public ResponseEntity<LoginResponse> login(@RequestBody User user) {
 
-        User loggedInUser = userService.loginUser(
+        LoginResponse loginResponse = userService.loginUser(
                 user.getEmail(),
                 user.getPassword());
 
-        if (loggedInUser == null) {
+        if (loginResponse == null) {
             return ResponseEntity.status(401).build();
         }
 
-        return ResponseEntity.ok(loggedInUser);
+        return ResponseEntity.ok(loginResponse);
     }
 }

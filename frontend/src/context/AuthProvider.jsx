@@ -5,11 +5,13 @@ const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
 
-  const login = (userData) => {
+  const login = (userData, token) => {
     setIsLoggedIn(true);
     setUser(userData);
+
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", token);
   };
 
   const logout = () => {
@@ -18,6 +20,7 @@ const AuthProvider = ({ children }) => {
 
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   useEffect(() => {

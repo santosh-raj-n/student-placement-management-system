@@ -1,90 +1,79 @@
-import React, { useState } from 'react';
-import useAuth from '../hooks/useAuth';
+import React, { useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 const Login = () => {
+  const { login } = useAuth();
 
-    const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-        try {
+      if (!response.ok) {
+        throw new Error("Invalid email or password");
+      }
 
-            const response = await fetch(
-                "http://localhost:8080/api/users/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password
-                    })
-                }
-            );
+      const loginResponse = await response.json();
 
-            if (!response.ok) {
-                throw new Error("Invalid email or password");
-            }
+      console.log("Logged in user:", loginResponse.user);
+      console.log("JWT token:", loginResponse.token);
 
-            const user = await response.json();
+      login(loginResponse.user, loginResponse.token);
+    } catch (error) {
+      console.error("Login error:", error);
 
-            console.log("Logged in user:", user);
+      alert("Invalid email or password");
+    }
+  };
 
-            login(user);
+  return (
+    <>
+      <h1>Login Page</h1>
 
-        } catch (error) {
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email:</label>
 
-            console.error("Login error:", error);
+          <input
+            type="email"
+            value={email}
+            placeholder="Enter your email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-            alert("Invalid email or password");
+        <br />
 
-        }
-    };
+        <div>
+          <label>Password:</label>
 
-    return (
-        <>
-            <h1>Login Page</h1>
+          <input
+            type="password"
+            value={password}
+            placeholder="Enter your password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
-            <form onSubmit={handleSubmit}>
+        <br />
 
-                <div>
-                    <label>Email:</label>
-
-                    <input
-                        type="email"
-                        value={email}
-                        placeholder="Enter your email"
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-
-                <br />
-
-                <div>
-                    <label>Password:</label>
-
-                    <input
-                        type="password"
-                        value={password}
-                        placeholder="Enter your password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-
-                <br />
-
-                <button type="submit">
-                    Login
-                </button>
-
-            </form>
-        </>
-    );
+        <button type="submit">Login</button>
+      </form>
+    </>
+  );
 };
 
 export default Login;
