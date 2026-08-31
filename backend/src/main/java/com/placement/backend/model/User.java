@@ -25,6 +25,8 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    private String role;
+
     public User() {
     }
 
@@ -50,6 +52,10 @@ public class User {
         return password;
     }
 
+    public String getRole() {
+        return role;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -60,5 +66,9 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

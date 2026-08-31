@@ -20,6 +20,12 @@ const Navbar = () => {
                     <Link to="/company">Companies</Link>
                 </li>
 
+                {isLoggedIn && user?.role === "STUDENT" && (
+                    <li>
+                        <Link to="/applications">Applications</Link>
+                    </li>
+                )}
+
                 {isLoggedIn ? (
                     <>
                         <li>

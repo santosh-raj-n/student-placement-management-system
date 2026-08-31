@@ -28,9 +28,6 @@ const Login = () => {
 
       const loginResponse = await response.json();
 
-      console.log("Logged in user:", loginResponse.user);
-      console.log("JWT token:", loginResponse.token);
-
       login(loginResponse.user, loginResponse.token);
     } catch (error) {
       console.error("Login error:", error);

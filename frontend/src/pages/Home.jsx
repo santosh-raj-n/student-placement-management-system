@@ -6,7 +6,7 @@ import { getStats } from '../api/statsApi';
 
 const Home = () => {
 
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, user } = useAuth();
     const [stats, setStats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -28,7 +28,7 @@ const Home = () => {
     return (
         <>
             {isLoggedIn ? (
-                <WelcomeBanner name="Santosh" />
+                <WelcomeBanner name={user?.name} />
             ) : (
                 <h2>Please login to continue</h2>
             )}

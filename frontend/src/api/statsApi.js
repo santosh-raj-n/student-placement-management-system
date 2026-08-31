@@ -1,7 +1,13 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const getStats = async () => {
-    const response = await fetch(`${API_URL}/api/stat`);
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/api/stat`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch statistics");

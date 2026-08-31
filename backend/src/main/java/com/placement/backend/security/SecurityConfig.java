@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -14,47 +15,65 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+        public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+                this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
-                        .requestMatchers("/api/companies/**", "/api/stat").authenticated()
-                        .anyRequest().permitAll())
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                http
+                                .csrf(csrf -> csrf.disable())
+                                .cors(cors -> {
+                                })
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/companies/**").authenticated()
+                                                .requestMatchers(HttpMethod.POST, "/api/companies/**")
+                                                .hasRole("RECRUITER")
+                                                .requestMatchers(HttpMethod.PUT, "/api/companies/**")
+                                                .hasRole("RECRUITER")
+                                                .requestMatchers(HttpMethod.DELETE, "/api/companies/**")
+                                                .hasRole("RECRUITER")
+                                                .requestMatchers(HttpMethod.POST, "/api/applications")
+                                                .hasRole("STUDENT")
+                                                .requestMatchers(HttpMethod.GET, "/api/applications/my")
+                                                .hasRole("STUDENT")
+                                                .requestMatchers(HttpMethod.GET, "/api/applications/company/**")
+                                                .hasRole("RECRUITER")
+                                                .requestMatchers(
+                                                                HttpMethod.PUT,
+                                                                "/api/applications/company/*/application/*")
+                                                .hasRole("RECRUITER")
+                                                .requestMatchers("/api/stat").authenticated()
+                                                .anyRequest().permitAll())
+                                .addFilterBefore(
+                                                jwtAuthenticationFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration = new CorsConfiguration();
+                CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173"));
+                configuration.setAllowedOrigins(
+                                List.of("http://localhost:5173"));
 
-        configuration.setAllowedMethods(
-                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedMethods(
+                                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        configuration.setAllowedHeaders(
-                List.of("Authorization", "Content-Type"));
+                configuration.setAllowedHeaders(
+                                List.of("Authorization", "Content-Type"));
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", configuration);
+                source.registerCorsConfiguration("/**", configuration);
 
-        return source;
-    }
+                return source;
+        }
 }

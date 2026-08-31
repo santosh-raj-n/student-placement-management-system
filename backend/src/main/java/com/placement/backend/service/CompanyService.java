@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.placement.backend.exception.ForbiddenException;
 import com.placement.backend.model.Company;
 import com.placement.backend.repository.CompanyRepository;
 
@@ -24,9 +25,15 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
-    public Company updateCompany(Long id, Company updatedCompany) {
-        Company existingCompany = companyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+    public Company updateCompany(
+            Long id,
+            Long recruiterId,
+            Company updatedCompany) {
+
+        Company existingCompany = companyRepository
+                .findByIdAndRecruiterId(id, recruiterId)
+                .orElseThrow(() -> new ForbiddenException(
+                        "Company not found or you do not have permission to update it"));
 
         existingCompany.setName(updatedCompany.getName());
         existingCompany.setLocation(updatedCompany.getLocation());
@@ -36,10 +43,13 @@ public class CompanyService {
         return companyRepository.save(existingCompany);
     }
 
-    public void deleteCompany(Long id) {
-        if (!companyRepository.existsById(id)) {
-            throw new RuntimeException("Company not found");
-        }
-        companyRepository.deleteById(id);
+    public void deleteCompany(Long id, Long recruiterId) {
+
+        Company existingCompany = companyRepository
+                .findByIdAndRecruiterId(id, recruiterId)
+                .orElseThrow(() -> new ForbiddenException(
+                        "Company not found or you do not have permission to delete it"));
+
+        companyRepository.delete(existingCompany);
     }
 }

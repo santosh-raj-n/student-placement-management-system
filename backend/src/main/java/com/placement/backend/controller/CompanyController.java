@@ -2,6 +2,7 @@ package com.placement.backend.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,20 +33,40 @@ public class CompanyController {
     }
 
     @PostMapping
-    public Company createCompany(@Valid @RequestBody Company company) {
+    public Company createCompany(
+            @Valid @RequestBody Company company,
+            Authentication authentication) {
+
+        Long recruiterId = Long.parseLong(authentication.getName());
+
+        company.setRecruiterId(recruiterId);
+
         return companyService.createCompany(company);
     }
 
     @PutMapping("/{id}")
     public Company updateCompany(
             @PathVariable Long id,
-            @Valid @RequestBody Company company) {
+            @Valid @RequestBody Company company,
+            Authentication authentication) {
 
-        return companyService.updateCompany(id, company);
+        Long recruiterId = Long.parseLong(authentication.getName());
+
+        return companyService.updateCompany(
+                id,
+                recruiterId,
+                company);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCompany(@PathVariable Long id) {
-        companyService.deleteCompany(id);
+    public void deleteCompany(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        Long recruiterId = Long.parseLong(authentication.getName());
+
+        companyService.deleteCompany(
+                id,
+                recruiterId);
     }
 }

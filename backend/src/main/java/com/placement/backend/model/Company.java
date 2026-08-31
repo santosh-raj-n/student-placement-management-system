@@ -28,6 +28,16 @@ public class Company {
     @Min(value = 0, message = "Package amount cannot be negative")
     private Double packageAmount;
 
+    private Long recruiterId;
+
+    public Long getRecruiterId() {
+        return recruiterId;
+    }
+
+    public void setRecruiterId(Long recruiterId) {
+        this.recruiterId = recruiterId;
+    }
+
     public Company() {
     }
 

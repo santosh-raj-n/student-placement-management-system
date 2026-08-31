@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { applyToCompany } from "../api/applicationApi";
 import {
   getCompanies,
   createCompany,
@@ -7,6 +9,8 @@ import {
 } from "../api/companyApi";
 
 const Companies = () => {
+  const { user } = useAuth();
+
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -80,6 +84,7 @@ const Companies = () => {
     const companyToEdit = companies.find((company) => {
       return company.id === idToEdit;
     });
+
     setEditingCompany(companyToEdit);
   };
 
@@ -119,6 +124,16 @@ const Companies = () => {
     }
   };
 
+  const applyForCompany = async (companyId) => {
+    try {
+      const application = await applyToCompany(companyId);
+
+      alert(`Application submitted! Status: ${application.status}`);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   const totalOpenings = companies.reduce((total, company) => {
     return total + Number(company.openings);
   }, 0);
@@ -153,93 +168,114 @@ const Companies = () => {
 
           <p>No. of openings: {company.openings}</p>
 
-          <button type="button" onClick={() => deleteCompany(company.id)}>
-            Delete
-          </button>
+          {user?.role === "RECRUITER" && (
+            <>
+              <button
+                type="button"
+                onClick={() => deleteCompany(company.id)}
+              >
+                Delete
+              </button>
 
-          <button type="button" onClick={() => editCompany(company.id)}>
-            Edit
-          </button>
+              <button
+                type="button"
+                onClick={() => editCompany(company.id)}
+              >
+                Edit
+              </button>
+            </>
+          )}
+
+          {user?.role === "STUDENT" && (
+            <button
+              type="button"
+              onClick={() => applyForCompany(company.id)}
+            >
+              Apply
+            </button>
+          )}
         </div>
       ))}
 
-      <form onSubmit={registerComp}>
-        <div>
-          <label>Company Name: </label>
+      {user?.role === "RECRUITER" && (
+        <form onSubmit={registerComp}>
+          <div>
+            <label>Company Name: </label>
 
-          <input
-            type="text"
-            placeholder="Enter the Company Name"
-            value={newCompany.name}
-            onChange={(e) => {
-              setNewCompany({
-                ...newCompany,
-                name: e.target.value,
-              });
-            }}
-          />
-        </div>
+            <input
+              type="text"
+              placeholder="Enter the Company Name"
+              value={newCompany.name}
+              onChange={(e) => {
+                setNewCompany({
+                  ...newCompany,
+                  name: e.target.value,
+                });
+              }}
+            />
+          </div>
 
-        <br />
+          <br />
 
-        <div>
-          <label>Openings Location: </label>
+          <div>
+            <label>Openings Location: </label>
 
-          <input
-            type="text"
-            placeholder="Enter the location for openings"
-            value={newCompany.location}
-            onChange={(e) => {
-              setNewCompany({
-                ...newCompany,
-                location: e.target.value,
-              });
-            }}
-          />
-        </div>
+            <input
+              type="text"
+              placeholder="Enter the location for openings"
+              value={newCompany.location}
+              onChange={(e) => {
+                setNewCompany({
+                  ...newCompany,
+                  location: e.target.value,
+                });
+              }}
+            />
+          </div>
 
-        <br />
+          <br />
 
-        <div>
-          <label>Package per annum: </label>
+          <div>
+            <label>Package per annum: </label>
 
-          <input
-            type="number"
-            placeholder="Enter the package amount"
-            value={newCompany.package}
-            onChange={(e) => {
-              setNewCompany({
-                ...newCompany,
-                package: e.target.value,
-              });
-            }}
-          />
-        </div>
+            <input
+              type="number"
+              placeholder="Enter the package amount"
+              value={newCompany.package}
+              onChange={(e) => {
+                setNewCompany({
+                  ...newCompany,
+                  package: e.target.value,
+                });
+              }}
+            />
+          </div>
 
-        <br />
+          <br />
 
-        <div>
-          <label>No. of Openings: </label>
+          <div>
+            <label>No. of Openings: </label>
 
-          <input
-            type="number"
-            placeholder="Enter no. of openings"
-            value={newCompany.openings}
-            onChange={(e) => {
-              setNewCompany({
-                ...newCompany,
-                openings: e.target.value,
-              });
-            }}
-          />
-        </div>
+            <input
+              type="number"
+              placeholder="Enter no. of openings"
+              value={newCompany.openings}
+              onChange={(e) => {
+                setNewCompany({
+                  ...newCompany,
+                  openings: e.target.value,
+                });
+              }}
+            />
+          </div>
 
-        <br />
+          <br />
 
-        <button type="submit">Register</button>
-      </form>
+          <button type="submit">Register</button>
+        </form>
+      )}
 
-      {editingCompany && (
+      {user?.role === "RECRUITER" && editingCompany && (
         <div>
           <h2>Edit Company</h2>
 
