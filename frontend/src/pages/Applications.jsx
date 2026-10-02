@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { getMyApplications } from "../api/applicationApi";
 import { getCompanies } from "../api/companyApi";
 
+import "../styles/Applications.css";
+
 const Applications = () => {
   const [applications, setApplications] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -19,7 +21,7 @@ const Applications = () => {
         setApplications(applicationData);
         setCompanies(companyData);
       } catch (error) {
-        setError(error.message);
+        setError(error.message || "Failed to load applications");
       } finally {
         setLoading(false);
       }
@@ -29,42 +31,117 @@ const Applications = () => {
   }, []);
 
   if (loading) {
-    return <h2>Loading applications...</h2>;
+    return (
+      <main className="applications-page">
+        <div className="applications-status">
+          Loading applications...
+        </div>
+      </main>
+    );
   }
 
   if (error) {
-    return <h2>{error}</h2>;
+    return (
+      <main className="applications-page">
+        <div className="applications-status applications-error">
+          {error}
+        </div>
+      </main>
+    );
   }
 
   return (
-    <div>
-      <h1>My Applications</h1>
+    <main className="applications-page">
+      <section className="applications-header">
+        <div>
+          <h1>My Applications</h1>
+
+          <p>
+            Track the companies you have applied to and monitor your
+            application status.
+          </p>
+        </div>
+
+        <div className="applications-count">
+          <span>Total Applications</span>
+          <strong>{applications.length}</strong>
+        </div>
+      </section>
 
       {applications.length === 0 ? (
-        <p>You have not applied to any companies yet.</p>
+        <div className="empty-applications">
+          <h2>No Applications Yet</h2>
+
+          <p>
+            You have not applied to any companies yet. Explore available
+            companies and start your placement journey.
+          </p>
+        </div>
       ) : (
-        applications.map((application) => {
-          const company = companies.find(
-            (company) => company.id === application.companyId
-          );
+        <section className="applications-grid">
+          {applications.map((application) => {
+            const company = companies.find(
+              (company) => company.id === application.companyId
+            );
 
-          return (
-            <div key={application.id}>
-              <h2>{company ? company.name : "Company not found"}</h2>
+            return (
+              <article
+                className="application-card"
+                key={application.id}
+              >
+                <div className="application-card-header">
+                  <div>
+                    <h2>
+                      {company
+                        ? company.name
+                        : "Company not found"}
+                    </h2>
 
-              {company && (
-                <>
-                  <p>Location: {company.location}</p>
-                  <p>Package: {company.packageAmount} LPA</p>
-                </>
-              )}
+                    {company && (
+                      <p className="application-location">
+                        {company.location}
+                      </p>
+                    )}
+                  </div>
 
-              <p>Application Status: {application.status}</p>
-            </div>
-          );
-        })
+                  <span
+                    className={`application-status ${
+                      application.status?.toLowerCase() || ""
+                    }`}
+                  >
+                    {application.status}
+                  </span>
+                </div>
+
+                <div className="application-details">
+                  {company && (
+                    <>
+                      <div className="application-detail">
+                        <span>Package</span>
+                        <strong>
+                          {company.packageAmount} LPA
+                        </strong>
+                      </div>
+
+                      <div className="application-detail">
+                        <span>Openings</span>
+                        <strong>{company.openings}</strong>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="application-detail">
+                    <span>Application Status</span>
+
+                    <strong>{application.status}</strong>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </section>
       )}
-    </div>
+    </main>
   );
 };
 

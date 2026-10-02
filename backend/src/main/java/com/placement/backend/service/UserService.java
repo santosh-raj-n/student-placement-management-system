@@ -23,8 +23,13 @@ public class UserService {
             throw new RuntimeException("Email already registered");
         }
 
+        if (!"STUDENT".equals(user.getRole()) &&
+                !"RECRUITER".equals(user.getRole())) {
+
+            throw new RuntimeException("Invalid role selected");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("STUDENT");
 
         return userRepository.save(user);
     }

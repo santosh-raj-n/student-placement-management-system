@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/Register.css";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -10,9 +11,12 @@ const Register = () => {
     password: "",
     dept: "",
     phone: "",
+    role: "STUDENT",
+    companyName: "",
   });
 
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,48 +30,63 @@ const Register = () => {
     if (formData.email.trim() === "") {
       newErrors.email = "Email should not be empty";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = "Enter a valid Email";
+      newErrors.email = "Enter a valid email address";
     }
 
     if (formData.password.trim() === "") {
       newErrors.password = "Password is required";
     }
 
-    if (formData.dept.trim() === "") {
+    if (formData.role === "STUDENT" && formData.dept.trim() === "") {
       newErrors.dept = "Department cannot be empty";
     }
 
+    if (
+      formData.role === "RECRUITER" &&
+      formData.companyName.trim() === ""
+    ) {
+      newErrors.companyName =
+        "Company / Organization cannot be empty";
+    }
+
     if (!/^\d{10}$/.test(formData.phone.trim())) {
-      newErrors.phone = "Enter a valid phone no.";
+      newErrors.phone = "Enter a valid 10-digit phone number";
     }
 
     setErrors(newErrors);
 
-    if (Object.values(newErrors).length > 0) {
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      setIsSubmitting(true);
+
+      const response = await fetch(
+        "http://localhost:8080/api/users/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            password: formData.password,
+            role: formData.role,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
+
+        throw new Error(
+          errorData.message || "Registration failed"
+        );
       }
 
-      const data = await response.json();
-
-      console.log("Registered User:", data);
+      await response.json();
 
       alert("Registration successful!");
 
@@ -76,121 +95,214 @@ const Register = () => {
       console.error("Registration error:", error);
 
       alert(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData((previousData) => ({
+      ...previousData,
+      [name]: value,
+    }));
   };
 
   return (
-    <div>
-      <h1>Student Registration</h1>
+    <div className="register-page">
+      <div className="register-card">
+        <div className="register-header">
+          <h1>Create Account</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
-
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            placeholder="Enter Your Name:"
-            onChange={handleChange}
-          />
+          <p>
+            Join the Student Placement Management System
+          </p>
         </div>
 
-        {errors.name && <p>{errors.name}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="role-selection">
+            <label className="section-label">
+              Register as
+            </label>
 
-        <br />
+            <div className="role-options">
+              <label
+                className={`role-option ${
+                  formData.role === "STUDENT"
+                    ? "selected"
+                    : ""
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value="STUDENT"
+                  checked={formData.role === "STUDENT"}
+                  onChange={handleChange}
+                />
 
-        <div>
-          <label>Email:</label>
+                <div>
+                  <strong>Student</strong>
+                  <span>
+                    Find companies and apply for opportunities
+                  </span>
+                </div>
+              </label>
 
-          <input
-            type="text"
-            name="email"
-            placeholder="Enter your email:"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </div>
+              <label
+                className={`role-option ${
+                  formData.role === "RECRUITER"
+                    ? "selected"
+                    : ""
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value="RECRUITER"
+                  checked={formData.role === "RECRUITER"}
+                  onChange={handleChange}
+                />
 
-        {errors.email && <p>{errors.email}</p>}
+                <div>
+                  <strong>Recruiter</strong>
+                  <span>
+                    Post companies and manage applications
+                  </span>
+                </div>
+              </label>
+            </div>
+          </div>
 
-        <br />
+          <div className="form-group">
+            <label>Name</label>
 
-        <div>
-          <label>Password:</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              placeholder="Enter your name"
+              onChange={handleChange}
+            />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password:"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </div>
+            {errors.name && (
+              <p className="error-message">
+                {errors.name}
+              </p>
+            )}
+          </div>
 
-        {errors.password && <p>{errors.password}</p>}
+          <div className="form-group">
+            <label>Email</label>
 
-        <br />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              placeholder="Enter your email"
+              onChange={handleChange}
+            />
 
-        <div>
-          <label>Department:</label>
+            {errors.email && (
+              <p className="error-message">
+                {errors.email}
+              </p>
+            )}
+          </div>
 
-          <input
-            type="text"
-            name="dept"
-            placeholder="Enter Your Department"
-            value={formData.dept}
-            onChange={handleChange}
-          />
-        </div>
+          <div className="form-group">
+            <label>Password</label>
 
-        {errors.dept && <p>{errors.dept}</p>}
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              placeholder="Create a password"
+              onChange={handleChange}
+            />
 
-        <br />
+            {errors.password && (
+              <p className="error-message">
+                {errors.password}
+              </p>
+            )}
+          </div>
 
-        <div>
-          <label>Phone Number:</label>
+          {formData.role === "STUDENT" ? (
+            <div className="form-group">
+              <label>Department</label>
 
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            placeholder="Enter Your PhoneNo:"
-            onChange={handleChange}
-          />
-        </div>
+              <input
+                type="text"
+                name="dept"
+                value={formData.dept}
+                placeholder="Enter your department"
+                onChange={handleChange}
+              />
 
-        {errors.phone && <p>{errors.phone}</p>}
+              {errors.dept && (
+                <p className="error-message">
+                  {errors.dept}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>Company / Organization</label>
 
-        <br />
+              <input
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                placeholder="Enter company or organization name"
+                onChange={handleChange}
+              />
 
-        <button type="submit">Register</button>
-      </form>
+              {errors.companyName && (
+                <p className="error-message">
+                  {errors.companyName}
+                </p>
+              )}
+            </div>
+          )}
 
-      <h2>Student Details</h2>
+          <div className="form-group">
+            <label>Phone Number</label>
 
-      <p>
-        <strong>Name:</strong> {formData.name}
-      </p>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              placeholder="Enter your 10-digit phone number"
+              onChange={handleChange}
+            />
 
-      <p>
-        <strong>Email:</strong> {formData.email}
-      </p>
+            {errors.phone && (
+              <p className="error-message">
+                {errors.phone}
+              </p>
+            )}
+          </div>
 
-      <p>
-        <strong>Department:</strong> {formData.dept}
-      </p>
+          <button
+            type="submit"
+            className="register-button"
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? "Creating Account..."
+              : "Create Account"}
+          </button>
+        </form>
 
-      <p>
-        <strong>Phone Number:</strong> {formData.phone}
-      </p>
+        <p className="login-link">
+          Already have an account?{" "}
+          <span onClick={() => navigate("/login")}>
+            Login
+          </span>
+        </p>
+      </div>
     </div>
   );
 };

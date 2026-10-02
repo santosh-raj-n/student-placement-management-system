@@ -1,0 +1,100 @@
+.home-page {
+  min-height: calc(100vh - 70px);
+  padding: 40px;
+  background-color: #f4f6fb;
+}
+
+.home-hero {
+  max-width: 1100px;
+  margin: 0 auto 40px;
+}
+
+.home-hero-content {
+  background: white;
+  border: 1px solid #d9deea;
+  border-radius: 16px;
+  padding: 45px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.home-hero-content h1 {
+  margin-bottom: 15px;
+  font-size: 38px;
+  color: #1d2a4a;
+}
+
+.home-subtitle {
+  max-width: 650px;
+  margin: 15px auto 0;
+  color: #5f6878;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.home-login-message {
+  margin-top: 25px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #eef3ff;
+  color: #3456a5;
+  font-weight: 500;
+}
+
+.stats-section {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.stats-heading {
+  margin-bottom: 25px;
+}
+
+.stats-heading h2 {
+  margin-bottom: 8px;
+  color: #1d2a4a;
+  font-size: 30px;
+}
+
+.stats-heading p {
+  color: #687385;
+  margin: 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+}
+
+.home-status-message {
+  padding: 18px;
+  border-radius: 10px;
+  background-color: white;
+  border: 1px solid #d9deea;
+  color: #4b5563;
+}
+
+.error-message {
+  color: #b42318;
+  background-color: #fff5f5;
+  border-color: #f5c2c7;
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 25px 18px;
+  }
+
+  .home-hero-content {
+    padding: 30px 20px;
+  }
+
+  .home-hero-content h1 {
+    font-size: 30px;
+  }
+
+  .stats-heading h2 {
+    font-size: 26px;
+  }
+}

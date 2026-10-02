@@ -1,23 +1,37 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import "../styles/Login.css";
 
 const Login = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    setError("");
+
+    if (email.trim() === "" || password.trim() === "") {
+      setError("Email and password are required");
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
+
       const response = await fetch("http://localhost:8080/api/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          email: email.trim(),
           password,
         }),
       });
@@ -29,47 +43,65 @@ const Login = () => {
       const loginResponse = await response.json();
 
       login(loginResponse.user, loginResponse.token);
+
+      navigate("/");
     } catch (error) {
       console.error("Login error:", error);
 
-      alert("Invalid email or password");
+      setError("Invalid email or password");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <>
-      <h1>Login Page</h1>
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-header">
+          <h1>Welcome Back</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-
-          <input
-            type="email"
-            value={email}
-            placeholder="Enter your email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <p>Login to access your Placement Portal account</p>
         </div>
 
-        <br />
+        <form onSubmit={handleSubmit}>
+          <div className="login-form-group">
+            <label>Email</label>
 
-        <div>
-          <label>Password:</label>
+            <input
+              type="email"
+              value={email}
+              placeholder="Enter your email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-          <input
-            type="password"
-            value={password}
-            placeholder="Enter your password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+          <div className="login-form-group">
+            <label>Password</label>
 
-        <br />
+            <input
+              type="password"
+              value={password}
+              placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-        <button type="submit">Login</button>
-      </form>
-    </>
+          {error && (
+            <p className="login-error-message">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            className="login-button"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

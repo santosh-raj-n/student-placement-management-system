@@ -1,0 +1,199 @@
+.applications-page {
+  min-height: calc(100vh - 70px);
+  padding: 40px;
+  background-color: #f4f6fb;
+}
+
+.applications-header {
+  max-width: 1100px;
+  margin: 0 auto 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+}
+
+.applications-header h1 {
+  margin: 0 0 8px;
+  font-size: 34px;
+  color: #1d2a4a;
+}
+
+.applications-header p {
+  margin: 0;
+  color: #687385;
+  line-height: 1.6;
+}
+
+.applications-count {
+  min-width: 180px;
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #d9deea;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.applications-count span {
+  display: block;
+  font-size: 14px;
+  color: #687385;
+  margin-bottom: 8px;
+}
+
+.applications-count strong {
+  font-size: 30px;
+  color: #3456a5;
+}
+
+.applications-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+.application-card {
+  background-color: white;
+  border: 1px solid #d9deea;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+}
+
+.application-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e8ef;
+}
+
+.application-card-header h2 {
+  margin: 0 0 8px;
+  color: #1d2a4a;
+  font-size: 23px;
+}
+
+.application-location {
+  margin: 0;
+  color: #687385;
+}
+
+.application-status {
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  background-color: #eef3ff;
+  color: #3456a5;
+}
+
+.application-status.pending {
+  background-color: #fff7e6;
+  color: #b26a00;
+}
+
+.application-status.accepted,
+.application-status.approved {
+  background-color: #eaf8ef;
+  color: #237a42;
+}
+
+.application-status.rejected {
+  background-color: #fff0f0;
+  color: #b42318;
+}
+
+.application-details {
+  display: grid;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.application-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.application-detail span {
+  color: #687385;
+  font-size: 14px;
+}
+
+.application-detail strong {
+  color: #1d2a4a;
+}
+
+.empty-applications {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 45px;
+  text-align: center;
+  background-color: white;
+  border: 1px solid #d9deea;
+  border-radius: 14px;
+}
+
+.empty-applications h2 {
+  margin-top: 0;
+  color: #1d2a4a;
+}
+
+.empty-applications p {
+  color: #687385;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.applications-status {
+  max-width: 700px;
+  margin: 80px auto;
+  padding: 20px;
+  text-align: center;
+  background-color: white;
+  border: 1px solid #d9deea;
+  border-radius: 10px;
+  color: #4b5563;
+}
+
+.applications-error {
+  color: #b42318;
+  background-color: #fff5f5;
+  border-color: #f5c2c7;
+}
+
+@media (max-width: 768px) {
+  .applications-page {
+    padding: 25px 18px;
+  }
+
+  .applications-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .applications-count {
+    width: 100%;
+  }
+
+  .applications-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .application-card-header {
+    flex-direction: column;
+  }
+
+  .application-detail {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
