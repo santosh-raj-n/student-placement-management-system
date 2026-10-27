@@ -1,5 +1,9 @@
 package com.placement.backend.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,6 +33,11 @@ public class Company {
     private Double packageAmount;
 
     private Long recruiterId;
+
+    @ElementCollection
+    private List<String> eligibleDepartments = new ArrayList<>();
+
+    private boolean anyDepartmentEligible = true;
 
     public Long getRecruiterId() {
         return recruiterId;
@@ -86,5 +95,21 @@ public class Company {
 
     public void setPackageAmount(Double packageAmount) {
         this.packageAmount = packageAmount;
+    }
+
+    public List<String> getEligibleDepartments() {
+        return eligibleDepartments;
+    }
+
+    public void setEligibleDepartments(List<String> eligibleDepartments) {
+        this.eligibleDepartments = eligibleDepartments;
+    }
+
+    public boolean isAnyDepartmentEligible() {
+        return anyDepartmentEligible;
+    }
+
+    public void setAnyDepartmentEligible(boolean anyDepartmentEligible) {
+        this.anyDepartmentEligible = anyDepartmentEligible;
     }
 }

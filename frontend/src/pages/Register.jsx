@@ -2,6 +2,22 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Register.css";
 
+const DEGREE_OPTIONS = {
+  "B.E./B.Tech": [
+    "Computer Science and Engineering",
+    "Information Technology",
+    "Electronics and Communication Engineering",
+    "Electrical and Electronics Engineering",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Artificial Intelligence and Data Science",
+    "Computer Science and Engineering (AI & ML)",
+  ],
+  "B.Sc.": ["Computer Science"],
+  BCA: ["Computer Applications"],
+  "M.E./M.Tech": ["Computer Science and Engineering"],
+  MCA: ["Computer Applications"],
+};
 const Register = () => {
   const navigate = useNavigate();
 
@@ -9,7 +25,8 @@ const Register = () => {
     name: "",
     email: "",
     password: "",
-    dept: "",
+    degree: "",
+    department: "",
     phone: "",
     role: "STUDENT",
     companyName: "",
@@ -37,16 +54,18 @@ const Register = () => {
       newErrors.password = "Password is required";
     }
 
-    if (formData.role === "STUDENT" && formData.dept.trim() === "") {
-      newErrors.dept = "Department cannot be empty";
+    if (formData.role === "STUDENT") {
+      if (!formData.degree) {
+        newErrors.degree = "Please select your degree";
+      }
+
+      if (!formData.department) {
+        newErrors.department = "Please select your department";
+      }
     }
 
-    if (
-      formData.role === "RECRUITER" &&
-      formData.companyName.trim() === ""
-    ) {
-      newErrors.companyName =
-        "Company / Organization cannot be empty";
+    if (formData.role === "RECRUITER" && formData.companyName.trim() === "") {
+      newErrors.companyName = "Company / Organization cannot be empty";
     }
 
     if (!/^\d{10}$/.test(formData.phone.trim())) {
@@ -62,28 +81,25 @@ const Register = () => {
     try {
       setIsSubmitting(true);
 
-      const response = await fetch(
-        "http://localhost:8080/api/users/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: formData.name.trim(),
-            email: formData.email.trim(),
-            password: formData.password,
-            role: formData.role,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:8080/api/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          password: formData.password,
+          role: formData.role,
+          degree: formData.role === "STUDENT" ? formData.degree : null,
+          department: formData.role === "STUDENT" ? formData.department : null,
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
 
-        throw new Error(
-          errorData.message || "Registration failed"
-        );
+        throw new Error(errorData.message || "Registration failed");
       }
 
       await response.json();
@@ -115,23 +131,17 @@ const Register = () => {
         <div className="register-header">
           <h1>Create Account</h1>
 
-          <p>
-            Join the Student Placement Management System
-          </p>
+          <p>Join the Student Placement Management System</p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="role-selection">
-            <label className="section-label">
-              Register as
-            </label>
+            <label className="section-label">Register as</label>
 
             <div className="role-options">
               <label
                 className={`role-option ${
-                  formData.role === "STUDENT"
-                    ? "selected"
-                    : ""
+                  formData.role === "STUDENT" ? "selected" : ""
                 }`}
               >
                 <input
@@ -144,17 +154,13 @@ const Register = () => {
 
                 <div>
                   <strong>Student</strong>
-                  <span>
-                    Find companies and apply for opportunities
-                  </span>
+                  <span>Find companies and apply for opportunities</span>
                 </div>
               </label>
 
               <label
                 className={`role-option ${
-                  formData.role === "RECRUITER"
-                    ? "selected"
-                    : ""
+                  formData.role === "RECRUITER" ? "selected" : ""
                 }`}
               >
                 <input
@@ -167,9 +173,7 @@ const Register = () => {
 
                 <div>
                   <strong>Recruiter</strong>
-                  <span>
-                    Post companies and manage applications
-                  </span>
+                  <span>Post companies and manage applications</span>
                 </div>
               </label>
             </div>
@@ -186,11 +190,7 @@ const Register = () => {
               onChange={handleChange}
             />
 
-            {errors.name && (
-              <p className="error-message">
-                {errors.name}
-              </p>
-            )}
+            {errors.name && <p className="error-message">{errors.name}</p>}
           </div>
 
           <div className="form-group">
@@ -204,11 +204,7 @@ const Register = () => {
               onChange={handleChange}
             />
 
-            {errors.email && (
-              <p className="error-message">
-                {errors.email}
-              </p>
-            )}
+            {errors.email && <p className="error-message">{errors.email}</p>}
           </div>
 
           <div className="form-group">
@@ -223,46 +219,83 @@ const Register = () => {
             />
 
             {errors.password && (
-              <p className="error-message">
-                {errors.password}
-              </p>
+              <p className="error-message">{errors.password}</p>
             )}
           </div>
 
           {formData.role === "STUDENT" ? (
-            <div className="form-group">
-              <label>Department</label>
+            <>
+              <div className="form-group">
+                <label htmlFor="degree">Degree *</label>
 
-              <input
-                type="text"
-                name="dept"
-                value={formData.dept}
-                placeholder="Enter your department"
-                onChange={handleChange}
-              />
+                <select
+                  id="degree"
+                  name="degree"
+                  value={formData.degree}
+                  onChange={(event) => {
+                    setFormData((previousData) => ({
+                      ...previousData,
+                      degree: event.target.value,
+                      department: "",
+                    }));
+                  }}
+                  required
+                >
+                  <option value="">Select your degree</option>
 
-              {errors.dept && (
-                <p className="error-message">
-                  {errors.dept}
-                </p>
-              )}
-            </div>
+                  {Object.keys(DEGREE_OPTIONS).map((degree) => (
+                    <option key={degree} value={degree}>
+                      {degree}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.degree && (
+                  <p className="error-message">{errors.degree}</p>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="department">Department / Stream *</label>
+
+                <select
+                  id="department"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  disabled={!formData.degree}
+                  required
+                >
+                  <option value="">Select your department</option>
+
+                  {(DEGREE_OPTIONS[formData.degree] || []).map((department) => (
+                    <option key={department} value={department}>
+                      {department}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.department && (
+                  <p className="error-message">{errors.department}</p>
+                )}
+              </div>
+            </>
           ) : (
             <div className="form-group">
-              <label>Company / Organization</label>
+              <label htmlFor="companyName">Company / Organization *</label>
 
               <input
+                id="companyName"
                 type="text"
                 name="companyName"
                 value={formData.companyName}
                 placeholder="Enter company or organization name"
                 onChange={handleChange}
+                required
               />
 
               {errors.companyName && (
-                <p className="error-message">
-                  {errors.companyName}
-                </p>
+                <p className="error-message">{errors.companyName}</p>
               )}
             </div>
           )}
@@ -278,11 +311,7 @@ const Register = () => {
               onChange={handleChange}
             />
 
-            {errors.phone && (
-              <p className="error-message">
-                {errors.phone}
-              </p>
-            )}
+            {errors.phone && <p className="error-message">{errors.phone}</p>}
           </div>
 
           <button
@@ -290,17 +319,13 @@ const Register = () => {
             className="register-button"
             disabled={isSubmitting}
           >
-            {isSubmitting
-              ? "Creating Account..."
-              : "Create Account"}
+            {isSubmitting ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
         <p className="login-link">
           Already have an account?{" "}
-          <span onClick={() => navigate("/login")}>
-            Login
-          </span>
+          <span onClick={() => navigate("/login")}>Login</span>
         </p>
       </div>
     </div>

@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { getMyApplications } from "../api/applicationApi";
 import { getCompanies } from "../api/companyApi";
+import { useAuth } from "../context/AuthContext";
 
 import "../styles/Applications.css";
 
 const Applications = () => {
+  const { user } = useAuth();
+
+  if (user?.role !== "STUDENT") {
+    return (
+      <main className="applications-page">
+        <div className="applications-status">
+          Student access required. Please log in with a student account.
+        </div>
+      </main>
+    );
+  }
   const [applications, setApplications] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,9 +45,7 @@ const Applications = () => {
   if (loading) {
     return (
       <main className="applications-page">
-        <div className="applications-status">
-          Loading applications...
-        </div>
+        <div className="applications-status">Loading applications...</div>
       </main>
     );
   }
@@ -43,9 +53,7 @@ const Applications = () => {
   if (error) {
     return (
       <main className="applications-page">
-        <div className="applications-status applications-error">
-          {error}
-        </div>
+        <div className="applications-status applications-error">{error}</div>
       </main>
     );
   }
@@ -57,8 +65,8 @@ const Applications = () => {
           <h1>My Applications</h1>
 
           <p>
-            Track the companies you have applied to and monitor your
-            application status.
+            Track the companies you have applied to and monitor your application
+            status.
           </p>
         </div>
 
@@ -81,26 +89,17 @@ const Applications = () => {
         <section className="applications-grid">
           {applications.map((application) => {
             const company = companies.find(
-              (company) => company.id === application.companyId
+              (company) => company.id === application.companyId,
             );
 
             return (
-              <article
-                className="application-card"
-                key={application.id}
-              >
+              <article className="application-card" key={application.id}>
                 <div className="application-card-header">
                   <div>
-                    <h2>
-                      {company
-                        ? company.name
-                        : "Company not found"}
-                    </h2>
+                    <h2>{company ? company.name : "Company not found"}</h2>
 
                     {company && (
-                      <p className="application-location">
-                        {company.location}
-                      </p>
+                      <p className="application-location">{company.location}</p>
                     )}
                   </div>
 
@@ -118,9 +117,7 @@ const Applications = () => {
                     <>
                       <div className="application-detail">
                         <span>Package</span>
-                        <strong>
-                          {company.packageAmount} LPA
-                        </strong>
+                        <strong>{company.packageAmount} LPA</strong>
                       </div>
 
                       <div className="application-detail">

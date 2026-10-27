@@ -1,55 +1,59 @@
-import React from 'react';
-import useAuth from '../hooks/useAuth';
+import React from "react";
+import useAuth from "../hooks/useAuth";
 import "../styles/Navbar.css";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const { isLoggedIn, user, logout } = useAuth();
 
-    const { isLoggedIn, user, logout } = useAuth();
+  return (
+    <nav>
+      <h2>Placement Portal</h2>
 
-    return (
-        <nav>
-            <h2>Placement Portal</h2>
+      <ul>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
 
-            <ul>
-                <li>
-                    <Link to="/">Home</Link>
-                </li>
+        <li>
+          <Link to="/company">Companies</Link>
+        </li>
 
-                <li>
-                    <Link to="/company">Companies</Link>
-                </li>
+        {isLoggedIn && user?.role === "STUDENT" && (
+          <li>
+            <Link to="/applications">Applications</Link>
+          </li>
+        )}
+        {isLoggedIn && user?.role === "RECRUITER" && (
+          <li>
+            <Link to="/recruiter-applications">Review Applications</Link>
+          </li>
+        )}
 
-                {isLoggedIn && user?.role === "STUDENT" && (
-                    <li>
-                        <Link to="/applications">Applications</Link>
-                    </li>
-                )}
+        {isLoggedIn ? (
+          <>
+            <li>
+              <span>Welcome, {user?.name}</span>
+            </li>
 
-                {isLoggedIn ? (
-                    <>
-                        <li>
-                            <span>Welcome, {user?.name}</span>
-                        </li>
+            <li>
+              <button onClick={logout}>Logout</button>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
 
-                        <li>
-                            <button onClick={logout}>Logout</button>
-                        </li>
-                    </>
-                ) : (
-                    <>
-                        <li>
-                            <Link to="/login">Login</Link>
-                        </li>
-
-                        <li>
-                            <Link to="/register">Register</Link>
-                        </li>
-                    </>
-                )}
-            </ul>
-        </nav>
-    );
+            <li>
+              <Link to="/register">Register</Link>
+            </li>
+          </>
+        )}
+      </ul>
+    </nav>
+  );
 };
 
 export default Navbar;

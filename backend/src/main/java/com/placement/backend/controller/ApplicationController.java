@@ -1,3 +1,4 @@
+
 package com.placement.backend.controller;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.placement.backend.dto.ApplicationReviewResponse;
 import com.placement.backend.model.Application;
 import com.placement.backend.service.ApplicationService;
 
@@ -53,6 +55,18 @@ public class ApplicationController {
         Long recruiterId = Long.parseLong(authentication.getName());
 
         return applicationService.getCompanyApplications(
+                companyId,
+                recruiterId);
+    }
+
+    @GetMapping("/company/{companyId}/reviews")
+    public List<ApplicationReviewResponse> getCompanyApplicationReviews(
+            @PathVariable Long companyId,
+            Authentication authentication) {
+
+        Long recruiterId = Long.parseLong(authentication.getName());
+
+        return applicationService.getCompanyApplicationReviews(
                 companyId,
                 recruiterId);
     }

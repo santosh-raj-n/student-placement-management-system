@@ -32,6 +32,12 @@ public class CompanyController {
         return companyService.getCompanies();
     }
 
+    @GetMapping("/my")
+    public List<Company> getMyCompanies(Authentication authentication) {
+        Long recruiterId = Long.parseLong(authentication.getName());
+        return companyService.getRecruiterCompanies(recruiterId);
+    }
+
     @PostMapping
     public Company createCompany(
             @Valid @RequestBody Company company,

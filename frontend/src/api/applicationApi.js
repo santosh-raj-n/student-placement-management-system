@@ -44,3 +44,56 @@ export const getMyApplications = async () => {
 
   return await response.json();
 };
+
+
+
+export const getCompanyApplicationReviews = async (companyId) => {
+  const response = await fetch(
+    `${API_URL}/api/applications/company/${companyId}/reviews`,
+    {
+      headers: {
+        ...getAuthHeaders(),
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+
+    throw new Error(
+      errorData.message || "Failed to fetch company applications",
+    );
+  }
+
+  return await response.json();
+};
+
+export const updateApplicationStatus = async (
+  companyId,
+  applicationId,
+  status,
+) => {
+  const response = await fetch(
+    `${API_URL}/api/applications/company/${companyId}/application/${applicationId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+      },
+      body: JSON.stringify({
+        status,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+
+    throw new Error(
+      errorData.message || "Failed to update application status",
+    );
+  }
+
+  return await response.json();
+};

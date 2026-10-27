@@ -29,6 +29,21 @@ public class UserService {
             throw new RuntimeException("Invalid role selected");
         }
 
+        if ("STUDENT".equals(user.getRole())) {
+
+            if (user.getDegree() == null || user.getDegree().isBlank()) {
+                throw new RuntimeException("Degree is required for students");
+            }
+
+            if (user.getDepartment() == null || user.getDepartment().isBlank()) {
+                throw new RuntimeException("Department is required for students");
+            }
+
+        } else {
+            user.setDegree(null);
+            user.setDepartment(null);
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);

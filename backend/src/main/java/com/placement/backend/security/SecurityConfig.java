@@ -31,6 +31,8 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/users/register", "/api/users/login").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/companies/**").authenticated()
+                                                .requestMatchers(HttpMethod.GET, "/api/companies/my").hasRole("RECRUITER")
+                                                .requestMatchers(HttpMethod.GET, "/api/companies/**").authenticated()
                                                 .requestMatchers(HttpMethod.POST, "/api/companies/**")
                                                 .hasRole("RECRUITER")
                                                 .requestMatchers(HttpMethod.PUT, "/api/companies/**")

@@ -27,6 +27,10 @@ public class User {
 
     private String role;
 
+    private String degree;
+
+    private String department;
+
     public User() {
     }
 
@@ -56,6 +60,14 @@ public class User {
         return role;
     }
 
+    public String getDegree() {
+        return degree;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -70,5 +82,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public void setDegree(String degree) {
+        this.degree = degree;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 }

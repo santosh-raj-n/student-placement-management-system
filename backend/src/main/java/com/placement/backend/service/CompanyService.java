@@ -21,6 +21,10 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
+    public List<Company> getRecruiterCompanies(Long recruiterId) {
+        return companyRepository.findByRecruiterId(recruiterId);
+    }
+
     public Company createCompany(Company company) {
         return companyRepository.save(company);
     }
