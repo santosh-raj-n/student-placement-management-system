@@ -7,6 +7,7 @@ import Companies from "./pages/Companies";
 import Applications from "./pages/Applications";
 import { Routes, Route } from "react-router-dom";
 import RecruiterApplications from "./pages/RecruiterApplications";
+import RegisterCompany from "./pages/RegisterCompany";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/company" element={<Companies />} />
+        <Route path="/company/register" element={<RegisterCompany />} />
         <Route path="/applications" element={<Applications />} />
         <Route
           path="/recruiter-applications"

@@ -6,6 +6,7 @@ import {
   getCompanyApplicationReviews,
   updateApplicationStatus,
 } from "../api/applicationApi";
+import "../styles/RecruiterApplications.css";
 
 const RecruiterApplications = () => {
   const { user } = useAuth();

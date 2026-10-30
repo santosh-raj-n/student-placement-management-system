@@ -183,3 +183,19 @@
     grid-template-columns: 1fr;
   }
 }
+
+.register-company-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 22px;
+  background: #23458f;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.register-company-link:hover {
+  background: #17336f;
+}

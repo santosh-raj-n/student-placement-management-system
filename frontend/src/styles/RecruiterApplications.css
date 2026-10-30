@@ -1,0 +1,151 @@
+
+.recruiter-applications-page {
+  min-height: calc(100vh - 75px);
+  padding: 40px 6%;
+  background: #f4f6fb;
+  color: #1d2a4a;
+}
+
+.recruiter-applications-page > header {
+  max-width: 1200px;
+  margin: 0 auto 32px;
+}
+
+.recruiter-applications-page h1 {
+  font-size: 32px;
+  margin: 0 0 10px;
+  color: #1d2a4a;
+}
+
+.recruiter-applications-page header p {
+  color: #687385;
+  font-size: 16px;
+  margin: 0;
+}
+
+.recruiter-company-section {
+  max-width: 1200px;
+  margin: 0 auto 35px;
+  padding: 26px;
+  background: #ffffff;
+  border: 1px solid #e0e5ef;
+  border-radius: 14px;
+  box-shadow: 0 5px 20px rgba(30, 50, 90, 0.05);
+}
+
+.recruiter-company-section > h2 {
+  font-size: 23px;
+  margin: 0 0 8px;
+  color: #23458f;
+}
+
+.recruiter-company-section > p {
+  color: #687385;
+  margin: 0 0 22px;
+}
+
+.recruiter-applications-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.recruiter-application-card {
+  padding: 22px;
+  background: #f9faff;
+  border: 1px solid #e1e6f0;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recruiter-application-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(30, 50, 90, 0.09);
+}
+
+.recruiter-application-card h3 {
+  margin: 0 0 18px;
+  font-size: 19px;
+  color: #1d2a4a;
+}
+
+.recruiter-application-card > p {
+  margin: 11px 0;
+  color: #5f6878;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.recruiter-application-card strong {
+  color: #273653;
+}
+
+.recruiter-application-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.recruiter-application-actions button {
+  border: none;
+  border-radius: 7px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.recruiter-application-actions button:first-child {
+  background: #e1f5e9;
+  color: #187443;
+}
+
+.recruiter-application-actions button:first-child:hover {
+  background: #c9ecd7;
+}
+
+.recruiter-application-actions button:last-child {
+  background: #fde8e8;
+  color: #b42318;
+}
+
+.recruiter-application-actions button:last-child:hover {
+  background: #fbd1d1;
+}
+
+.recruiter-application-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recruiter-applications-page .status-message {
+  max-width: 1200px;
+  margin: 0 auto 20px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  background: #fff0f0;
+  color: #b42318;
+}
+
+.recruiter-applications-page > p {
+  color: #687385;
+}
+
+@media (max-width: 768px) {
+  .recruiter-applications-page {
+    padding: 28px 16px;
+  }
+
+  .recruiter-applications-page h1 {
+    font-size: 26px;
+  }
+
+  .recruiter-company-section {
+    padding: 18px;
+  }
+
+  .recruiter-applications-list {
+    grid-template-columns: 1fr;
+  }
+}

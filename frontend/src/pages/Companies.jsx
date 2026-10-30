@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { applyToCompany } from "../api/applicationApi";
 import {
   getCompanies,
-  createCompany,
   updateCompany as updateCompanyApi,
   deleteCompany as deleteCompanyApi,
 } from "../api/companyApi";
@@ -15,14 +16,6 @@ const Companies = () => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const [newCompany, setNewCompany] = useState({
-    name: "",
-    location: "",
-    package: "",
-    openings: "",
-  });
-
   const [editingCompany, setEditingCompany] = useState(null);
 
   useEffect(() => {
@@ -39,39 +32,6 @@ const Companies = () => {
 
     loadCompanies();
   }, []);
-
-  const registerComp = async (e) => {
-    e.preventDefault();
-
-    try {
-      const companyData = {
-        name: newCompany.name,
-        location: newCompany.location,
-        openings: Number(newCompany.openings),
-        packageAmount: Number(newCompany.package),
-      };
-
-      const createdCompany = await createCompany(companyData);
-
-      setCompanies([...companies, createdCompany]);
-
-      setNewCompany({
-        name: "",
-        location: "",
-        package: "",
-        openings: "",
-      });
-
-      setError("");
-    } catch (error) {
-      try {
-        const validationErrors = JSON.parse(error.message);
-        setError(validationErrors);
-      } catch {
-        setError(error.message);
-      }
-    }
-  };
 
   const deleteCompany = async (idToDelete) => {
     try {
@@ -157,6 +117,15 @@ const Companies = () => {
   return (
     <main className="companies-page">
       <div className="companies-header">
+        {user?.role === "RECRUITER" && (
+          <Link
+            to="/company/register"
+            className="register-company-link"
+          >
+            + Register New Company
+          </Link>
+        )}
+
         <h1>Companies That Are Hiring</h1>
 
         <p>
@@ -172,7 +141,9 @@ const Companies = () => {
       )}
 
       {error && typeof error === "string" && (
-        <div className="status-message error-message">{error}</div>
+        <div className="status-message error-message">
+          {error}
+        </div>
       )}
 
       {error && typeof error === "object" && (
@@ -250,83 +221,6 @@ const Companies = () => {
         ))}
       </div>
 
-      {/* Every recruiter can register a new company */}
-      {user?.role === "RECRUITER" && (
-        <section className="company-form-section">
-          <h2>Register a New Company</h2>
-
-          <form className="company-form" onSubmit={registerComp}>
-            <div className="company-form-group">
-              <label>Company Name</label>
-
-              <input
-                type="text"
-                placeholder="Enter the company name"
-                value={newCompany.name}
-                onChange={(e) => {
-                  setNewCompany({
-                    ...newCompany,
-                    name: e.target.value,
-                  });
-                }}
-              />
-            </div>
-
-            <div className="company-form-group">
-              <label>Hiring Location</label>
-
-              <input
-                type="text"
-                placeholder="Enter the hiring location"
-                value={newCompany.location}
-                onChange={(e) => {
-                  setNewCompany({
-                    ...newCompany,
-                    location: e.target.value,
-                  });
-                }}
-              />
-            </div>
-
-            <div className="company-form-group">
-              <label>Package Per Annum</label>
-
-              <input
-                type="number"
-                placeholder="Enter the package amount"
-                value={newCompany.package}
-                onChange={(e) => {
-                  setNewCompany({
-                    ...newCompany,
-                    package: e.target.value,
-                  });
-                }}
-              />
-            </div>
-
-            <div className="company-form-group">
-              <label>Number of Openings</label>
-
-              <input
-                type="number"
-                placeholder="Enter number of openings"
-                value={newCompany.openings}
-                onChange={(e) => {
-                  setNewCompany({
-                    ...newCompany,
-                    openings: e.target.value,
-                  });
-                }}
-              />
-            </div>
-
-            <button type="submit" className="primary-button">
-              Register Company
-            </button>
-          </form>
-        </section>
-      )}
-
       {/* Edit form only opens for the recruiter's own company */}
       {user?.role === "RECRUITER" && editingCompany && (
         <section className="company-form-section company-edit-section">
@@ -395,6 +289,14 @@ const Companies = () => {
 
             <button type="submit" className="primary-button">
               Update Company
+            </button>
+
+            <button
+              type="button"
+              className="edit-button"
+              onClick={() => setEditingCompany(null)}
+            >
+              Cancel
             </button>
           </form>
         </section>

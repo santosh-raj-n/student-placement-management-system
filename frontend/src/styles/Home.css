@@ -98,3 +98,38 @@
     font-size: 26px;
   }
 }
+
+.home-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.home-actions a {
+  display: inline-block;
+  padding: 13px 24px;
+  border-radius: 8px;
+  background-color: #23458f;
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.home-actions a:hover {
+  background-color: #17336f;
+  transform: translateY(-2px);
+}
+
+.home-actions a:last-child {
+  background-color: white;
+  color: #23458f;
+  border: 1px solid #23458f;
+}
+
+.home-actions a:last-child:hover {
+  background-color: #eef3ff;
+}
