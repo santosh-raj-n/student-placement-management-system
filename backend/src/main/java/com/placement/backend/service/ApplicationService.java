@@ -18,108 +18,119 @@ import com.placement.backend.repository.UserRepository;
 @Service
 public class ApplicationService {
 
-    private final ApplicationRepository applicationRepository;
-    private final CompanyRepository companyRepository;
-    private final UserRepository userRepository;
+        private final ApplicationRepository applicationRepository;
+        private final CompanyRepository companyRepository;
+        private final UserRepository userRepository;
 
-    public ApplicationService(
-            ApplicationRepository applicationRepository,
-            CompanyRepository companyRepository,
-            UserRepository userRepository) {
+        public ApplicationService(
+                        ApplicationRepository applicationRepository,
+                        CompanyRepository companyRepository,
+                        UserRepository userRepository) {
 
-        this.applicationRepository = applicationRepository;
-        this.companyRepository = companyRepository;
-        this.userRepository = userRepository;
-    }
-
-    public Application apply(Long studentId, Long companyId) {
-
-        boolean alreadyApplied = applicationRepository
-                .existsByStudentIdAndCompanyId(studentId, companyId);
-
-        if (alreadyApplied) {
-            throw new RuntimeException("You have already applied to this company");
+                this.applicationRepository = applicationRepository;
+                this.companyRepository = companyRepository;
+                this.userRepository = userRepository;
         }
 
-        Application application = new Application(
-                studentId,
-                companyId,
-                ApplicationStatus.PENDING);
+        public Application apply(Long studentId, Long companyId) {
 
-        return applicationRepository.save(application);
-    }
+                boolean alreadyApplied = applicationRepository
+                                .existsByStudentIdAndCompanyId(studentId, companyId);
 
-    public List<Application> getMyApplications(Long studentId) {
-        return applicationRepository.findByStudentId(studentId);
-    }
+                if (alreadyApplied) {
+                        throw new RuntimeException("You have already applied to this company");
+                }
+                Company company = companyRepository.findById(companyId)
+                                .orElseThrow(() -> new RuntimeException("Company not found"));
 
-    public List<Application> getCompanyApplications(
-            Long companyId,
-            Long recruiterId) {
+                User student = userRepository.findById(studentId)
+                                .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        companyRepository
-                .findByIdAndRecruiterId(companyId, recruiterId)
-                .orElseThrow(() -> new ForbiddenException(
-                        "Company not found or you do not have permission to view its applications"));
+                if (!company.isAnyDepartmentEligible()
+                                && !company.getEligibleDepartments().contains(student.getDepartment())) {
+                        throw new RuntimeException(
+                                        "Your department is not eligible for this company");
+                }
 
-        return applicationRepository.findByCompanyId(companyId);
-    }
+                Application application = new Application(
+                                studentId,
+                                companyId,
+                                ApplicationStatus.PENDING);
 
-    public List<ApplicationReviewResponse> getCompanyApplicationReviews(
-            Long companyId,
-            Long recruiterId) {
-
-        // Verify that the recruiter owns this company
-        Company company = companyRepository
-                .findByIdAndRecruiterId(companyId, recruiterId)
-                .orElseThrow(() -> new ForbiddenException(
-                        "Company not found or you do not have permission to view its applications"));
-
-        List<Application> applications = applicationRepository.findByCompanyId(companyId);
-
-        List<ApplicationReviewResponse> reviews = new ArrayList<>();
-
-        for (Application application : applications) {
-
-            User student = userRepository
-                    .findById(application.getStudentId())
-                    .orElseThrow(() -> new RuntimeException(
-                            "Student not found"));
-
-            ApplicationReviewResponse review = new ApplicationReviewResponse(
-                    application.getId(),
-                    student.getId(),
-                    student.getName(),
-                    student.getEmail(),
-                    company.getId(),
-                    company.getName(),
-                    application.getStatus());
-
-            reviews.add(review);
+                return applicationRepository.save(application);
         }
 
-        return reviews;
-    }
+        public List<Application> getMyApplications(Long studentId) {
+                return applicationRepository.findByStudentId(studentId);
+        }
 
-    public Application updateApplicationStatus(
-            Long applicationId,
-            Long companyId,
-            Long recruiterId,
-            ApplicationStatus status) {
+        public List<Application> getCompanyApplications(
+                        Long companyId,
+                        Long recruiterId) {
 
-        // First verify that this recruiter owns the company
-        companyRepository
-                .findByIdAndRecruiterId(companyId, recruiterId)
-                .orElseThrow(() -> new ForbiddenException(
-                        "Company not found or you do not have permission to manage applications"));
+                companyRepository
+                                .findByIdAndRecruiterId(companyId, recruiterId)
+                                .orElseThrow(() -> new ForbiddenException(
+                                                "Company not found or you do not have permission to view its applications"));
 
-        // Then verify that the application belongs to this company
-        Application application = applicationRepository
-                .findByIdAndCompanyId(applicationId, companyId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                return applicationRepository.findByCompanyId(companyId);
+        }
 
-        application.setStatus(status);
+        public List<ApplicationReviewResponse> getCompanyApplicationReviews(
+                        Long companyId,
+                        Long recruiterId) {
 
-        return applicationRepository.save(application);
-    }
+                // Verify that the recruiter owns this company
+                Company company = companyRepository
+                                .findByIdAndRecruiterId(companyId, recruiterId)
+                                .orElseThrow(() -> new ForbiddenException(
+                                                "Company not found or you do not have permission to view its applications"));
+
+                List<Application> applications = applicationRepository.findByCompanyId(companyId);
+
+                List<ApplicationReviewResponse> reviews = new ArrayList<>();
+
+                for (Application application : applications) {
+
+                        User student = userRepository
+                                        .findById(application.getStudentId())
+                                        .orElseThrow(() -> new RuntimeException(
+                                                        "Student not found"));
+
+                        ApplicationReviewResponse review = new ApplicationReviewResponse(
+                                        application.getId(),
+                                        student.getId(),
+                                        student.getName(),
+                                        student.getEmail(),
+                                        company.getId(),
+                                        company.getName(),
+                                        application.getStatus());
+
+                        reviews.add(review);
+                }
+
+                return reviews;
+        }
+
+        public Application updateApplicationStatus(
+                        Long applicationId,
+                        Long companyId,
+                        Long recruiterId,
+                        ApplicationStatus status) {
+
+                // First verify that this recruiter owns the company
+                companyRepository
+                                .findByIdAndRecruiterId(companyId, recruiterId)
+                                .orElseThrow(() -> new ForbiddenException(
+                                                "Company not found or you do not have permission to manage applications"));
+
+                // Then verify that the application belongs to this company
+                Application application = applicationRepository
+                                .findByIdAndCompanyId(applicationId, companyId)
+                                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+                application.setStatus(status);
+
+                return applicationRepository.save(application);
+        }
 }

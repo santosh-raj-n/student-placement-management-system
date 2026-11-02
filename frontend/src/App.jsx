@@ -8,6 +8,7 @@ import Applications from "./pages/Applications";
 import { Routes, Route } from "react-router-dom";
 import RecruiterApplications from "./pages/RecruiterApplications";
 import RegisterCompany from "./pages/RegisterCompany";
+import EditCompany from "./pages/EditCompany";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           path="/recruiter-applications"
           element={<RecruiterApplications />}
         />
+        <Route path="/company/edit/:id" element={<EditCompany />} />
       </Routes>
     </>
   );

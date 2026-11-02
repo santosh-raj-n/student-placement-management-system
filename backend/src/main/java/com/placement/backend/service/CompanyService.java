@@ -43,6 +43,11 @@ public class CompanyService {
         existingCompany.setLocation(updatedCompany.getLocation());
         existingCompany.setOpenings(updatedCompany.getOpenings());
         existingCompany.setPackageAmount(updatedCompany.getPackageAmount());
+        existingCompany.setAnyDepartmentEligible(
+                updatedCompany.isAnyDepartmentEligible());
+
+        existingCompany.setEligibleDepartments(
+                updatedCompany.getEligibleDepartments());
 
         return companyRepository.save(existingCompany);
     }

@@ -1,10 +1,21 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { createCompany } from "../api/companyApi";
 import "../styles/Companies.css";
 
+const DEPARTMENT_OPTIONS = [
+  "Computer Science and Engineering",
+  "Information Technology",
+  "Electronics and Communication Engineering",
+  "Electrical and Electronics Engineering",
+  "Mechanical Engineering",
+  "Civil Engineering",
+  "Artificial Intelligence and Data Science",
+  "Computer Science and Engineering (AI & ML)",
+  "Computer Science",
+  "Computer Applications",
+];
 const RegisterCompany = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -14,6 +25,8 @@ const RegisterCompany = () => {
     location: "",
     package: "",
     openings: "",
+    eligibleDepartments: [],
+    anyDepartmentEligible: true,
   });
 
   const [error, setError] = useState("");
@@ -40,6 +53,8 @@ const RegisterCompany = () => {
         location: newCompany.location,
         openings: Number(newCompany.openings),
         packageAmount: Number(newCompany.package),
+        anyDepartmentEligible: newCompany.anyDepartmentEligible,
+        eligibleDepartments: newCompany.eligibleDepartments,
       };
 
       await createCompany(companyData);
@@ -127,11 +142,54 @@ const RegisterCompany = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="primary-button"
-            disabled={loading}
-          >
+          <div className="company-form-group">
+            <label>Department Eligibility</label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={newCompany.anyDepartmentEligible}
+                onChange={(e) => {
+                  setNewCompany((previous) => ({
+                    ...previous,
+                    anyDepartmentEligible: e.target.checked,
+                    eligibleDepartments: [],
+                  }));
+                }}
+              />
+              Any Department — All students can apply
+            </label>
+          </div>
+
+          {!newCompany.anyDepartmentEligible && (
+            <div className="company-form-group">
+              <label>Select Eligible Departments</label>
+
+              {DEPARTMENT_OPTIONS.map((department) => (
+                <label key={department}>
+                  <input
+                    type="checkbox"
+                    checked={newCompany.eligibleDepartments.includes(
+                      department,
+                    )}
+                    onChange={(e) => {
+                      setNewCompany((previous) => ({
+                        ...previous,
+                        eligibleDepartments: e.target.checked
+                          ? [...previous.eligibleDepartments, department]
+                          : previous.eligibleDepartments.filter(
+                              (item) => item !== department,
+                            ),
+                      }));
+                    }}
+                  />
+                  {department}
+                </label>
+              ))}
+            </div>
+          )}
+
+          <button type="submit" className="primary-button" disabled={loading}>
             {loading ? "Registering..." : "Register Company"}
           </button>
 
