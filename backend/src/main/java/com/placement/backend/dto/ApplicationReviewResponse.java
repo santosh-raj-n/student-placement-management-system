@@ -9,6 +9,8 @@ public class ApplicationReviewResponse {
     private Long studentId;
     private String studentName;
     private String studentEmail;
+    private String studentDegree;
+    private String studentDepartment;
     private Long companyId;
     private String companyName;
     private ApplicationStatus status;
@@ -18,6 +20,8 @@ public class ApplicationReviewResponse {
             Long studentId,
             String studentName,
             String studentEmail,
+            String studentDegree,
+            String studentDepartment,
             Long companyId,
             String companyName,
             ApplicationStatus status) {
@@ -26,6 +30,8 @@ public class ApplicationReviewResponse {
         this.studentId = studentId;
         this.studentName = studentName;
         this.studentEmail = studentEmail;
+        this.studentDegree = studentDegree;
+        this.studentDepartment = studentDepartment;
         this.companyId = companyId;
         this.companyName = companyName;
         this.status = status;
@@ -45,6 +51,14 @@ public class ApplicationReviewResponse {
 
     public String getStudentEmail() {
         return studentEmail;
+    }
+
+    public String getStudentDegree() {
+        return studentDegree;
+    }
+
+    public String getStudentDepartment() {
+        return studentDepartment;
     }
 
     public Long getCompanyId() {

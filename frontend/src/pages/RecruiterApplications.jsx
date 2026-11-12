@@ -145,22 +145,26 @@ const RecruiterApplications = () => {
                       key={application.applicationId}
                       className="recruiter-application-card"
                     >
-                      <h3>{application.studentName}</h3>
+                      <header className="applicant-card-header">
+                        <h3>{application.studentName}</h3>
+                        <p>{application.studentEmail}</p>
+                      </header>
 
-                      <p>
-                        <strong>Email:</strong>{" "}
-                        {application.studentEmail}
-                      </p>
+                      <div className="applicant-academic-details" aria-label="Student academic details">
+                        <div>
+                          <span>Degree</span>
+                          <strong>{application.studentDegree || "Not provided"}</strong>
+                        </div>
+                        <div>
+                          <span>Department</span>
+                          <strong>{application.studentDepartment || "Not provided"}</strong>
+                        </div>
+                      </div>
 
-                      <p>
-                        <strong>Application ID:</strong>{" "}
-                        {application.applicationId}
-                      </p>
-
-                      <p>
-                        <strong>Status:</strong>{" "}
-                        {application.status}
-                      </p>
+                      <div className="applicant-application-meta">
+                        <p><strong>Application ID:</strong> {application.applicationId}</p>
+                        <p><strong>Status:</strong> {application.status}</p>
+                      </div>
 
                       <div className="recruiter-application-actions">
                         <button

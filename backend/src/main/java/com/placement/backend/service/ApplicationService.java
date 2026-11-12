@@ -102,6 +102,8 @@ public class ApplicationService {
                                         student.getId(),
                                         student.getName(),
                                         student.getEmail(),
+                                        student.getDegree(),
+                                        student.getDepartment(),
                                         company.getId(),
                                         company.getName(),
                                         application.getStatus());
