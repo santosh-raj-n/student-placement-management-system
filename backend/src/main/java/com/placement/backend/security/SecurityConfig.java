@@ -30,6 +30,8 @@ public class SecurityConfig {
                                 })
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/users/profile").hasRole("STUDENT")
+                                                .requestMatchers(HttpMethod.PUT, "/api/users/profile").hasRole("STUDENT")
                                                 .requestMatchers(HttpMethod.GET, "/api/companies/**").authenticated()
                                                 .requestMatchers(HttpMethod.GET, "/api/companies/my").hasRole("RECRUITER")
                                                 .requestMatchers(HttpMethod.GET, "/api/companies/**").authenticated()

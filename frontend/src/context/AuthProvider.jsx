@@ -23,6 +23,15 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
   };
 
+  const updateUser = (updates) => {
+    setUser((currentUser) => {
+      if (!currentUser) return currentUser;
+      const updatedUser = { ...currentUser, ...updates };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+
   useEffect(() => {
     const savedLogin = localStorage.getItem("isLoggedIn");
     const savedUser = localStorage.getItem("user");
@@ -34,7 +43,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

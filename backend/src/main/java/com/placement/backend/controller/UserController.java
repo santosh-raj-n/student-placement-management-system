@@ -5,6 +5,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import jakarta.validation.Valid;
+import com.placement.backend.dto.UpdateStudentProfileRequest;
+import com.placement.backend.dto.StudentProfileResponse;
 
 import com.placement.backend.dto.LoginResponse;
 import com.placement.backend.model.User;
@@ -38,5 +45,38 @@ public class UserController {
         }
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<StudentProfileResponse> profile(Authentication authentication) {
+        Long userId = authenticatedUserId(authentication);
+        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        return userService.findById(userId)
+                .map(StudentProfileResponse::from)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<StudentProfileResponse> updateProfile(
+            Authentication authentication,
+            @Valid @RequestBody UpdateStudentProfileRequest request) {
+        Long userId = authenticatedUserId(authentication);
+        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        return userService.updateStudentProfile(userId, request)
+                .map(StudentProfileResponse::from)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    private Long authenticatedUserId(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) return null;
+        try {
+            return Long.valueOf(authentication.getPrincipal().toString());
+        } catch (NumberFormatException exception) {
+            return null;
+        }
     }
 }

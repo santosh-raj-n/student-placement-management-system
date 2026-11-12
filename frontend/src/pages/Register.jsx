@@ -1,23 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Register.css";
-
-const DEGREE_OPTIONS = {
-  "B.E./B.Tech": [
-    "Computer Science and Engineering",
-    "Information Technology",
-    "Electronics and Communication Engineering",
-    "Electrical and Electronics Engineering",
-    "Mechanical Engineering",
-    "Civil Engineering",
-    "Artificial Intelligence and Data Science",
-    "Computer Science and Engineering (AI & ML)",
-  ],
-  "B.Sc.": ["Computer Science"],
-  BCA: ["Computer Applications"],
-  "M.E./M.Tech": ["Computer Science and Engineering"],
-  MCA: ["Computer Applications"],
-};
+import AcademicProgramFields from "../components/AcademicProgramFields";
 const Register = () => {
   const navigate = useNavigate();
 
@@ -224,62 +208,14 @@ const Register = () => {
           </div>
 
           {formData.role === "STUDENT" ? (
-            <>
-              <div className="form-group">
-                <label htmlFor="degree">Degree *</label>
-
-                <select
-                  id="degree"
-                  name="degree"
-                  value={formData.degree}
-                  onChange={(event) => {
-                    setFormData((previousData) => ({
-                      ...previousData,
-                      degree: event.target.value,
-                      department: "",
-                    }));
-                  }}
-                  required
-                >
-                  <option value="">Select your degree</option>
-
-                  {Object.keys(DEGREE_OPTIONS).map((degree) => (
-                    <option key={degree} value={degree}>
-                      {degree}
-                    </option>
-                  ))}
-                </select>
-
-                {errors.degree && (
-                  <p className="error-message">{errors.degree}</p>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="department">Department / Stream *</label>
-
-                <select
-                  id="department"
-                  name="department"
-                  value={formData.department}
-                  onChange={handleChange}
-                  disabled={!formData.degree}
-                  required
-                >
-                  <option value="">Select your department</option>
-
-                  {(DEGREE_OPTIONS[formData.degree] || []).map((department) => (
-                    <option key={department} value={department}>
-                      {department}
-                    </option>
-                  ))}
-                </select>
-
-                {errors.department && (
-                  <p className="error-message">{errors.department}</p>
-                )}
-              </div>
-            </>
+            <AcademicProgramFields
+              degree={formData.degree}
+              department={formData.department}
+              errors={errors}
+              onChange={(updates) =>
+                setFormData((previousData) => ({ ...previousData, ...updates }))
+              }
+            />
           ) : (
             <div className="form-group">
               <label htmlFor="companyName">Company / Organization *</label>

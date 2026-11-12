@@ -2,8 +2,10 @@ package com.placement.backend.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 import com.placement.backend.dto.LoginResponse;
+import com.placement.backend.dto.UpdateStudentProfileRequest;
 import com.placement.backend.model.User;
 import com.placement.backend.repository.UserRepository;
 import com.placement.backend.security.JwtService;
@@ -62,6 +64,19 @@ public class UserService {
         String token = jwtService.generateToken(user);
 
         return new LoginResponse(user, token);
+    }
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public Optional<User> updateStudentProfile(Long id, UpdateStudentProfileRequest request) {
+        return userRepository.findById(id).map(user -> {
+            user.setName(request.name().trim());
+            user.setDegree(request.degree().trim());
+            user.setDepartment(request.department().trim());
+            return userRepository.save(user);
+        });
     }
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {

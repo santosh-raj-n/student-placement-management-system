@@ -9,6 +9,7 @@ import { Routes, Route } from "react-router-dom";
 import RecruiterApplications from "./pages/RecruiterApplications";
 import RegisterCompany from "./pages/RegisterCompany";
 import EditCompany from "./pages/EditCompany";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/company" element={<Companies />} />
         <Route path="/company/register" element={<RegisterCompany />} />
         <Route path="/applications" element={<Applications />} />
+        <Route path="/profile" element={<Profile />} />
         <Route
           path="/recruiter-applications"
           element={<RecruiterApplications />}
