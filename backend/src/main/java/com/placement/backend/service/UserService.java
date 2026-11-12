@@ -2,11 +2,18 @@ package com.placement.backend.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import com.placement.backend.dto.LoginResponse;
+import com.placement.backend.dto.StudentProfileResponse;
 import com.placement.backend.dto.UpdateStudentProfileRequest;
+import com.placement.backend.model.Application;
+import com.placement.backend.model.ApplicationStatus;
+import com.placement.backend.model.Company;
 import com.placement.backend.model.User;
+import com.placement.backend.repository.ApplicationRepository;
+import com.placement.backend.repository.CompanyRepository;
 import com.placement.backend.repository.UserRepository;
 import com.placement.backend.security.JwtService;
 
@@ -14,6 +21,8 @@ import com.placement.backend.security.JwtService;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ApplicationRepository applicationRepository;
+    private final CompanyRepository companyRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -70,17 +79,55 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public Optional<User> updateStudentProfile(Long id, UpdateStudentProfileRequest request) {
-        return userRepository.findById(id).map(user -> {
-            user.setName(request.name().trim());
-            user.setDegree(request.degree().trim());
-            user.setDepartment(request.department().trim());
-            return userRepository.save(user);
-        });
+    @Transactional
+    public Optional<StudentProfileResponse> updateStudentProfile(
+            Long id, UpdateStudentProfileRequest request) {
+        Optional<User> foundUser = userRepository.findById(id);
+        if (foundUser.isEmpty()) return Optional.empty();
+
+        User user = foundUser.get();
+        String newDegree = request.degree().trim();
+        String newDepartment = request.department().trim();
+        boolean academicDetailsChanged =
+                !java.util.Objects.equals(user.getDegree(), newDegree)
+                        || !java.util.Objects.equals(user.getDepartment(), newDepartment);
+
+        user.setName(request.name().trim());
+        user.setDegree(newDegree);
+        user.setDepartment(newDepartment);
+        User savedUser = userRepository.save(user);
+
+        int deletedApplications = 0;
+        if (academicDetailsChanged) {
+            for (Application application : applicationRepository.findByStudentId(id)) {
+                Optional<Company> foundCompany = companyRepository.findById(application.getCompanyId());
+                if (foundCompany.isEmpty()) continue;
+
+                Company company = foundCompany.get();
+                boolean remainsEligible = company.isAnyDepartmentEligible()
+                        || company.getEligibleDepartments().contains(newDepartment);
+                boolean removableStatus = application.getStatus() == ApplicationStatus.PENDING
+                        || application.getStatus() == ApplicationStatus.REJECTED;
+
+                if (!remainsEligible && removableStatus) {
+                    applicationRepository.deleteById(application.getId());
+                    deletedApplications++;
+                }
+            }
+        }
+
+        return Optional.of(StudentProfileResponse.from(savedUser, deletedApplications));
     }
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserService(
+            UserRepository userRepository,
+            ApplicationRepository applicationRepository,
+            CompanyRepository companyRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService) {
         this.userRepository = userRepository;
+        this.applicationRepository = applicationRepository;
+        this.companyRepository = companyRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }

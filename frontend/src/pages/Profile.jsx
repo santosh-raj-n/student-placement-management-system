@@ -59,6 +59,17 @@ const Profile = () => {
       return;
     }
 
+    const academicDetailsChanged =
+      draft.degree !== profile.degree || draft.department !== profile.department;
+    if (
+      academicDetailsChanged &&
+      !window.confirm(
+        "Changing your degree or department may make some current applications ineligible. Ineligible PENDING and REJECTED applications will be permanently deleted. ACCEPTED applications will be retained. Continue?",
+      )
+    ) {
+      return;
+    }
+
     try {
       setSaving(true);
       const updatedProfile = await updateStudentProfile({
@@ -76,7 +87,12 @@ const Profile = () => {
         department: updatedProfile.department,
       });
       setIsEditing(false);
-      setSuccessMessage("Your profile has been updated.");
+      const deletedCount = updatedProfile.deletedApplications || 0;
+      setSuccessMessage(
+        deletedCount > 0
+          ? `Your profile has been updated. ${deletedCount} ineligible application${deletedCount === 1 ? " was" : "s were"} deleted.`
+          : "Your profile has been updated.",
+      );
     } catch (requestError) {
       setSaveError(requestError.message);
     } finally {

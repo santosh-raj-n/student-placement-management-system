@@ -8,11 +8,16 @@ public record StudentProfileResponse(
         String email,
         String degree,
         String department,
-        String role) {
+        String role,
+        int deletedApplications) {
 
     public static StudentProfileResponse from(User user) {
+        return from(user, 0);
+    }
+
+    public static StudentProfileResponse from(User user, int deletedApplications) {
         return new StudentProfileResponse(
                 user.getId(), user.getName(), user.getEmail(),
-                user.getDegree(), user.getDepartment(), user.getRole());
+                user.getDegree(), user.getDepartment(), user.getRole(), deletedApplications);
     }
 }

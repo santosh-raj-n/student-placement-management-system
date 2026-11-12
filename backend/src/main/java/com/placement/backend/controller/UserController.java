@@ -66,7 +66,6 @@ public class UserController {
         if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         return userService.updateStudentProfile(userId, request)
-                .map(StudentProfileResponse::from)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
